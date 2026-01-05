@@ -15,9 +15,9 @@ export default function TargetBox({ position, onSelectCharacter, onClose }: Targ
         top: `${position.y}%`,
       }}
     >
-      <div className="absolute -translate-x-1/2 -translate-y-1/2 w-[100px] h-[100px] border-4 border-[#FB2C36] shadow-lg bg-black/10 backdrop-blur-[1px] rounded-sm pointer-events-none" />
+      <div className="absolute -translate-x-1/2 -translate-y-1/2 w-[50px] h-[50px] border-4 border-[#FB2C36] shadow-lg bg-black/10 rounded-sm pointer-events-none" />
 
-      <div className="absolute left-1/2 -translate-x-1/2 top-[58px] bg-[#0A0A0A] shadow-xl rounded-lg overflow-hidden flex flex-col min-w-[120px] pointer-events-auto">
+      <div className="absolute left-1/2 -translate-x-1/2 top-[40px] bg-[#0A0A0A] shadow-xl rounded-lg overflow-hidden flex flex-col min-w-[120px] pointer-events-auto">
         {CHARACTERS.map((char) => (
           <button
             key={char.id}

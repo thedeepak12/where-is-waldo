@@ -10,8 +10,8 @@ export type GameState = {
 };
 
 export const CHARACTERS = [
-  { id: 'waldo', name: 'Waldo' },
-  { id: 'wizard', name: 'Wizard' },
-  { id: 'odlaw', name: 'Odlaw' },
-  { id: 'wilma', name: 'Wilma' },
+  { id: 'waldo', name: 'Waldo', image: '/waldo.jpg' },
+  { id: 'wilma', name: 'Wilma', image: '/wilma.jpg' },
+  { id: 'wizard', name: 'Wizard', image: '/wizard.jpg' },
+  { id: 'odlaw', name: 'Odlaw', image: '/odlaw.jpg' },
 ];

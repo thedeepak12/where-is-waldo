@@ -34,9 +34,12 @@ export default function InteractiveImage({ children, onImageClick }: Interactive
       className="relative cursor-crosshair inline-block max-w-full overflow-hidden shadow-2xl rounded-xl border-[1.5px] border-[#1A1A1A] bg-[#1A1A1A]"
       onClick={handleClick}
     >
-      <div className="w-[1200px] h-[800px] bg-[#000000] flex items-center justify-center text-gray-400">
-        
-      </div>
+      <img
+        src="/gameboard.jpg"
+        alt="Game Board"
+        className="w-full h-auto select-none pointer-events-none"
+        draggable={false}
+      />
 
       <div className="absolute inset-0 pointer-events-none">
         {children}

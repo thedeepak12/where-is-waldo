@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import InteractiveImage from './InteractiveImage';
 import TargetBox from './TargetBox';
+import CharacterList from './CharacterList';
 import { Coordinate } from './types';
 
 export default function GameContainer() {
@@ -35,18 +36,24 @@ export default function GameContainer() {
 
   return (
     <div
-      className="flex flex-col items-center justify-center min-h-screen bg-[#0A0A0A] p-8 cursor-pointer"
+      className="flex flex-col items-center justify-center min-h-screen bg-[#0A0A0A] p-8 cursor-pointer relative"
       onClick={handleBackgroundClick}
     >
-      <div className="mb-8 text-center cursor-auto" onClick={(e) => e.stopPropagation()}>
-        <h1 className="text-3xl font-bold text-white">Where's Waldo?</h1>
-        <p className="text-white">Click on the image to find characters!</p>
+      <div className="relative w-full max-w-[1200px] mb-8 flex items-center justify-center cursor-auto" onClick={(e) => e.stopPropagation()}>
+        <div className="absolute left-0 top-1/2 -translate-y-1/2">
+          <CharacterList />
+        </div>
 
-        {feedback && (
-          <div className="mt-2 text-sm font-semibold text-[#0072F4] animate-pulse">
-            {feedback}
-          </div>
-        )}
+        <div className="text-center">
+          <h1 className="text-3xl font-bold text-white">Where's Waldo?</h1>
+          <p className="text-white">Click on the image to find characters!</p>
+
+          {feedback && (
+            <div className="mt-2 text-sm font-semibold text-[#0072F4] animate-pulse">
+              {feedback}
+            </div>
+          )}
+        </div>
       </div>
 
       <div onClick={(e) => e.stopPropagation()}>
