@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import MobileRestriction from "@/components/MobileRestriction";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -13,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Where's Waldo",
+  title: "Where's Waldo?",
   description: "Where's Waldo is an interactive puzzle game where players search for a character, Waldo, hidden within complex, cluttered scenes filled with distractions.",
 };
 
@@ -27,6 +28,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <MobileRestriction />
         {children}
       </body>
     </html>
