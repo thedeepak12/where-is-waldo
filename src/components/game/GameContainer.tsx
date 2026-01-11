@@ -4,9 +4,14 @@ import { useState } from 'react';
 import InteractiveImage from './InteractiveImage';
 import TargetBox from './TargetBox';
 import CharacterList from './CharacterList';
-import { Coordinate } from './types';
+import { validateGuess } from '@/app/actions';
+import { Character, Coordinate } from './types';
 
-export default function GameContainer() {
+interface GameContainerProps {
+  characters: Character[];
+}
+
+export default function GameContainer({ characters }: GameContainerProps) {
   const [targetPos, setTargetPos] = useState<Coordinate | null>(null);
   const [feedback, setFeedback] = useState<string | null>(null);
 
@@ -22,10 +27,19 @@ export default function GameContainer() {
     setFeedback(null);
   };
 
-  const handleSelectCharacter = (characterId: string) => {
+  const handleSelectCharacter = async (characterId: string) => {
     console.log(`Selected character: ${characterId} at position: ${JSON.stringify(targetPos)}`);
 
-    setFeedback(`Checking ${characterId}...`);
+    if (!targetPos) return;
+
+    setFeedback(`Checking...`);
+
+    try {
+      const result = await validateGuess(characterId, targetPos.x, targetPos.y);
+      setFeedback(result.message);
+    } catch (error) {
+      setFeedback("Error checking guess.");
+    }
 
     setTargetPos(null);
   };
@@ -41,7 +55,7 @@ export default function GameContainer() {
     >
       <div className="relative w-full max-w-[1200px] mb-8 flex items-center justify-center cursor-auto" onClick={(e) => e.stopPropagation()}>
         <div className="absolute left-0 top-1/2 -translate-y-1/2">
-          <CharacterList />
+          <CharacterList characters={characters} />
         </div>
 
         <div className="text-center">
@@ -63,13 +77,10 @@ export default function GameContainer() {
               position={targetPos}
               onSelectCharacter={handleSelectCharacter}
               onClose={handleCloseBox}
+              characters={characters}
             />
           )}
         </InteractiveImage>
-      </div>
-
-      <div className="mt-8 text-xs text-gray-400">
-        Coords: {targetPos ? `X: ${targetPos.x.toFixed(1)}%, Y: ${targetPos.y.toFixed(1)}%` : 'No Selection'}
       </div>
     </div>
   );

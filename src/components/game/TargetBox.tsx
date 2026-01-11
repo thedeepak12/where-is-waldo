@@ -1,12 +1,13 @@
-import { CHARACTERS, Coordinate } from './types';
+import { Character, Coordinate } from './types';
 
 interface TargetBoxProps {
   position: Coordinate;
   onSelectCharacter: (characterId: string) => void;
   onClose: () => void;
+  characters: Character[];
 }
 
-export default function TargetBox({ position, onSelectCharacter, onClose }: TargetBoxProps) {
+export default function TargetBox({ position, onSelectCharacter, onClose, characters }: TargetBoxProps) {
   return (
     <div
       className="absolute z-10"
@@ -18,7 +19,7 @@ export default function TargetBox({ position, onSelectCharacter, onClose }: Targ
       <div className="absolute -translate-x-1/2 -translate-y-1/2 w-[50px] h-[50px] border-4 border-[#FB2C36] shadow-lg bg-black/10 rounded-sm pointer-events-none" />
 
       <div className="absolute left-1/2 -translate-x-1/2 top-[40px] bg-[#0A0A0A] shadow-xl rounded-lg overflow-hidden flex flex-col min-w-[120px] pointer-events-auto">
-        {CHARACTERS.map((char) => (
+        {characters.map((char) => (
           <button
             key={char.id}
             onClick={(e) => {

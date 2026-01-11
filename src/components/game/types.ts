@@ -9,6 +9,11 @@ export type GameState = {
   foundCharacters: string[];
 };
 
+export interface Character {
+  id: string;
+  name: string;
+}
+
 export const CHARACTERS = [
   { id: 'waldo', name: 'Waldo', image: '/waldo.jpg' },
   { id: 'wilma', name: 'Wilma', image: '/wilma.jpg' },
