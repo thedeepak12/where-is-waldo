@@ -4,6 +4,7 @@ import { useState } from 'react';
 import InteractiveImage from './InteractiveImage';
 import TargetBox from './TargetBox';
 import CharacterList from './CharacterList';
+import Timer from './Timer';
 import { validateGuess } from '@/app/actions';
 import { Character, Coordinate } from './types';
 
@@ -14,6 +15,7 @@ interface GameContainerProps {
 export default function GameContainer({ characters }: GameContainerProps) {
   const [targetPos, setTargetPos] = useState<Coordinate | null>(null);
   const [feedback, setFeedback] = useState<string | null>(null);
+  const [foundCharacters, setFoundCharacters] = useState<{ id: string; x: number; y: number }[]>([]);
 
   const handleBackgroundClick = () => {
     if (targetPos) {
@@ -37,6 +39,19 @@ export default function GameContainer({ characters }: GameContainerProps) {
     try {
       const result = await validateGuess(characterId, targetPos.x, targetPos.y);
       setFeedback(result.message);
+
+      if (result.success && result.foundLocation) {
+        const newFound = [
+          ...foundCharacters,
+          { id: characterId, ...result.foundLocation! }
+        ];
+
+        setFoundCharacters(newFound);
+
+        if (newFound.length === characters.length) {
+          setFeedback("You have found all the characters!");
+        }
+      }
     } catch (error) {
       setFeedback("Error checking guess.");
     }
@@ -68,6 +83,10 @@ export default function GameContainer({ characters }: GameContainerProps) {
             </div>
           )}
         </div>
+
+        <div className="absolute right-0 top-1/2 -translate-y-1/2">
+          <Timer isRunning={foundCharacters.length < characters.length} />
+        </div>
       </div>
 
       <div onClick={(e) => e.stopPropagation()}>
@@ -80,6 +99,13 @@ export default function GameContainer({ characters }: GameContainerProps) {
               characters={characters}
             />
           )}
+          {foundCharacters.map((char) => (
+            <div
+              key={char.id}
+              className="absolute border-4 border-green-500 rounded-full w-12 h-12 -translate-x-1/2 -translate-y-1/2"
+              style={{ left: `${char.x}%`, top: `${char.y}%` }}
+            />
+          ))}
         </InteractiveImage>
       </div>
     </div>

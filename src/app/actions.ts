@@ -21,7 +21,11 @@ export async function validateGuess(characterId: string, x: number, y: number) {
     const THRESHOLD = 2;
 
     if (distance <= THRESHOLD) {
-      return { success: true, message: `You found ${target.name}!` };
+      return {
+        success: true,
+        message: `You found ${target.name}!`,
+        foundLocation: { x: target.x, y: target.y }
+      };
     } else {
       return { success: false, message: 'Not quite right. Keep looking!' };
     }
