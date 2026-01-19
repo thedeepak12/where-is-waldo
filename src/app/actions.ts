@@ -1,7 +1,7 @@
 'use server';
 
 import { db } from '../db';
-import { characters } from '../db/schema';
+import { characters, players } from '../db/schema';
 import { eq } from 'drizzle-orm';
 
 export async function validateGuess(characterId: string, x: number, y: number) {
@@ -32,5 +32,42 @@ export async function validateGuess(characterId: string, x: number, y: number) {
   } catch (error) {
     console.error('Validation error:', error);
     return { success: false, message: 'Something went wrong' };
+  }
+}
+
+export async function submitScore(name: string, timeTaken: number) {
+  try {
+    const finishedAt = new Date();
+    const startedAt = new Date(finishedAt.getTime() - timeTaken * 1000);
+
+    await db.insert(players).values({
+      name,
+      time_taken: timeTaken,
+      started_at: startedAt,
+      finished_at: finishedAt,
+      found_waldo: true,
+      found_odlaw: true,
+      found_wizard: true,
+      found_wilma: true,
+    });
+
+    return { success: true };
+  } catch (error) {
+    console.error('Submission error:', error);
+    return { success: false, message: 'Failed to submit score' };
+  }
+}
+
+export async function getLeaderboard() {
+  try {
+    const leaderboard = await db.query.players.findMany({
+      where: (players, { isNotNull }) => isNotNull(players.time_taken),
+      orderBy: (players, { asc }) => [asc(players.time_taken)],
+    });
+
+    return { success: true, data: leaderboard };
+  } catch (error) {
+    console.error('Error fetching leaderboard:', error);
+    return { success: false, message: 'Failed to fetch leaderboard' };
   }
 }

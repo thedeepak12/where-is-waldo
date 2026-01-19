@@ -1,11 +1,14 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import InteractiveImage from './InteractiveImage';
 import TargetBox from './TargetBox';
 import CharacterList from './CharacterList';
 import Timer from './Timer';
-import { validateGuess } from '@/app/actions';
+import GameOverPopup from './GameOverPopup';
+import LeaderboardDrawer from './LeaderboardDrawer';
+import Image from 'next/image';
+import { validateGuess, submitScore } from '@/app/actions';
 import { Character, Coordinate } from './types';
 
 interface GameContainerProps {
@@ -16,6 +19,17 @@ export default function GameContainer({ characters }: GameContainerProps) {
   const [targetPos, setTargetPos] = useState<Coordinate | null>(null);
   const [feedback, setFeedback] = useState<string | null>(null);
   const [foundCharacters, setFoundCharacters] = useState<{ id: string; x: number; y: number }[]>([]);
+  const [timeTaken, setTimeTaken] = useState(0);
+  const [isGameOver, setIsGameOver] = useState(false);
+  const [showPopup, setShowPopup] = useState(false);
+  const [showLeaderboard, setShowLeaderboard] = useState(false);
+
+  useEffect(() => {
+    if (foundCharacters.length === characters.length && characters.length > 0) {
+      setIsGameOver(true);
+      setShowPopup(true);
+    }
+  }, [foundCharacters, characters]);
 
   const handleBackgroundClick = () => {
     if (targetPos) {
@@ -25,6 +39,7 @@ export default function GameContainer({ characters }: GameContainerProps) {
   };
 
   const handleImageClick = (coords: Coordinate) => {
+    if (isGameOver) return;
     setTargetPos(coords);
     setFeedback(null);
   };
@@ -59,6 +74,14 @@ export default function GameContainer({ characters }: GameContainerProps) {
     setTargetPos(null);
   };
 
+  const handleTimeUpdate = (time: number) => {
+    setTimeTaken(time);
+  };
+
+  const handleSubmitScore = async (name: string) => {
+    await submitScore(name, timeTaken);
+  };
+
   const handleCloseBox = () => {
     setTargetPos(null);
   }
@@ -84,10 +107,33 @@ export default function GameContainer({ characters }: GameContainerProps) {
           )}
         </div>
 
-        <div className="absolute right-0 top-1/2 -translate-y-1/2">
-          <Timer isRunning={foundCharacters.length < characters.length} />
+        <div className="absolute right-0 top-1/2 -translate-y-1/2 flex items-center gap-4">
+          <Timer isRunning={!isGameOver} onTimeUpdate={handleTimeUpdate} />
+          <button
+            onClick={() => setShowLeaderboard(true)}
+            className="p-2 bg-black/50 backdrop-blur-sm border border-white/10 rounded-lg hover:bg-white/10 transition-colors pointer-events-auto"
+            title="Leaderboard"
+          >
+            <div className="relative w-8 h-8 cursor-pointer">
+              <Image
+                src="/leaderboard.svg"
+                alt="Leaderboard"
+                fill
+                className="object-contain"
+                style={{ filter: 'brightness(0) invert(1)' }}
+              />
+            </div>
+          </button>
         </div>
       </div>
+
+      {showPopup && (
+        <GameOverPopup
+          timeTaken={timeTaken}
+          onSubmit={handleSubmitScore}
+          onClose={() => setShowPopup(false)}
+        />
+      )}
 
       <div onClick={(e) => e.stopPropagation()}>
         <InteractiveImage onImageClick={handleImageClick}>
@@ -108,6 +154,10 @@ export default function GameContainer({ characters }: GameContainerProps) {
           ))}
         </InteractiveImage>
       </div>
+      <LeaderboardDrawer
+        isOpen={showLeaderboard}
+        onClose={() => setShowLeaderboard(false)}
+      />
     </div>
   );
 }
